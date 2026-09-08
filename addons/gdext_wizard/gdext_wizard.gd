@@ -1,22 +1,20 @@
 @tool
 extends EditorPlugin
 
-
-func _enable_plugin() -> void:
-	# Add autoloads here.
-	pass
-
-
-func _disable_plugin() -> void:
-	# Remove autoloads here.
-	pass
-
+var moduleManager: ModuleManager
 
 func _enter_tree() -> void:
-	# Initialization of the plugin goes here.
-	pass
-
+	moduleManager = ModuleManager.new()
+	add_tool_menu_item("C++: Create New Module...", _on_open_create_dialog)
 
 func _exit_tree() -> void:
-	# Clean-up of the plugin goes here.
-	pass
+	remove_tool_menu_item("C++: Create New Module...")
+	if moduleManager:
+		moduleManager.cleanup() # Supprime proprement le nœud Window de l'éditeur
+		moduleManager = null
+
+func _on_open_create_dialog() -> void:
+	if moduleManager == null:
+		moduleManager = ModuleManager.new()
+	
+	moduleManager.open_dialog()
