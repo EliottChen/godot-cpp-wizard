@@ -17,6 +17,8 @@ Download latest version of the plugin and place it in `res://addons/` root.
 go in Project Settings > Plugins and activate the plugin
 
 ## Using the plugin
+I tried integrating my plugin inside [Mini Emblem](https://github.com/EliottChen/MiniEmblem) as a test case.
+If you see theses three options appearing in Project > Tools, then the plugin has been installed succesfully!
 ![alt text](docs/howto.png)
 
 # Advanced infos
