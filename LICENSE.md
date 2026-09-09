@@ -1,16 +1,20 @@
-MIT License
+MIT License (Modified - Non-Commercial Resale)
 
 Copyright (c) 2026 Eliott Chen
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+to use, copy, modify, merge, publish, distribute, and/or sublicense copies
+of the Software, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. The above copyright notice and this permission notice shall be included in all
+   copies or substantial portions of the Software.
+
+2. Resale Restriction: The Software may not be sold, rented, or commercialized "as-is"
+   as a standalone product without prior written consent from the copyright holder.
+   Incorporating or compiling the Software into a larger work (such as a game, application,
+   or larger plugin framework) is permitted.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
