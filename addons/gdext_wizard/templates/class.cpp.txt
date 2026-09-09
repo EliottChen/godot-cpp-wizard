@@ -1,0 +1,12 @@
+#include "@@SNAKE@@.h"
+
+using namespace godot;
+
+void @@NAME@@::_bind_methods() {
+}
+
+@@NAME@@::@@NAME@@() {
+}
+
+@@NAME@@::~@@NAME@@() {
+}

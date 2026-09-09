@@ -4,7 +4,6 @@ extends RefCounted
 
 var dialog: ConfirmationDialog
 var module_name_input: LineEdit
-const TEMPLATE_DIR := "res://addons/gdext_wizard/templates/"
 
 
 func _init() -> void:
@@ -28,7 +27,6 @@ func _setup_dialog() -> void:
 	dialog.add_child(vbox)
 	dialog.confirmed.connect(_on_create_module_confirmed)
 	
-	# Attacher le dialogue à l'interface de l'éditeur
 	EditorInterface.get_base_control().add_child(dialog)
 
 func open_dialog() -> void:
@@ -50,56 +48,13 @@ func _on_create_module_confirmed() -> void:
 	if err != OK:
 		push_error(Debug.plugin_log_prefix + ": module creation failed with error %d." % err)
 
-func _write_file(path: String, content: String) -> bool:
-	var file := FileAccess.open(path, FileAccess.WRITE)
-	if file == null:
-		push_error(Debug.plugin_log_prefix + ": couldn't write file '%s' (error %d)." % [path, FileAccess.get_open_error()])
-		return false
-	file.store_string(content)
-	file.close()
-	return true
-
-func _apply_template(template: String, ctx: Dictionary) -> String:
-	var result := template
-	for key in ctx.keys():
-		result = result.replace("@@%s@@" % String(key).to_upper(), str(ctx[key]))
-	return result
-
-func _write_register_types(src_dir: String, snake_name: String, classes: Array) -> bool:
-	var includes := ""
-	var registrations := ""
-	for c in classes:
-		includes += "#include \"%s.h\"\n" % c["snake"]
-		registrations += "\tGDREGISTER_CLASS(%s);\n" % c["name"]
-
-	var ctx := {
-		"upper": snake_name.to_upper(),
-		"snake": snake_name,
-		"includes": includes,
-		"registrations": registrations,
-	}
-
-	var header := _apply_template(_load_template("register_types.h.txt"), ctx)
-	var cpp := _apply_template(_load_template("register_types.cpp.txt"), ctx)
-
-	var ok_h := _write_file(src_dir + "/register_types.h", header)
-	var ok_cpp := _write_file(src_dir + "/register_types.cpp", cpp)
-	return ok_h and ok_cpp
-
-func _load_template(template_name: String) -> String:
-	var file := FileAccess.open(TEMPLATE_DIR + template_name, FileAccess.READ)
-	if file == null:
-		push_error(Debug.plugin_log_prefix + ": missing template '%s' (error %d)." % [template_name, FileAccess.get_open_error()])
-		return ""
-	return file.get_as_text()
-
 func _write_sconstruct(module_root: String, snake_name: String, godot_cpp_ref: String) -> bool:
 	var ctx := {
 		"snake": snake_name,
 		"branch": godot_cpp_ref,
 	}
-	var content := _apply_template(_load_template("sconstruct.txt"), ctx)
-	return _write_file(module_root + "/SConstruct", content)
+	var content := TemplateUtils.apply_template(TemplateUtils.load_template("sconstruct.txt"), ctx)
+	return TemplateUtils.write_file(module_root + "/SConstruct", content)
 
 func _get_godot_cpp_branch() -> String:
 	var info := Engine.get_version_info()
@@ -130,7 +85,7 @@ func _write_module_metadata(module_root: String, pascal: String, snake: String, 
 		"target_godot_version": target_version,
 		"classes": []
 	}
-	return _write_file(module_root + "/module.json", JSON.stringify(data, "\t"))
+	return ModuleRegistry.save_module_data(pascal, data)
 
 func create_module(raw_name: String) -> Error:
 	var pascal := raw_name.to_pascal_case()
@@ -149,18 +104,15 @@ func create_module(raw_name: String) -> Error:
 		return ERR_CANT_CREATE
 
 	DirAccess.make_dir_recursive_absolute(module_root + "/src")
-	
-	if not _write_file(module_root + "/.gdignore", ""):
+
+	if not TemplateUtils.write_file(module_root + "/.gdignore", ""):
 		return ERR_CANT_CREATE
-	
-	if not _write_module_metadata(module_root, pascal, snake, ref, target_version):
-		return ERR_CANT_CREATE
-	
+
 	if not _write_module_metadata(module_root, pascal, snake, ref, target_version):
 		return ERR_CANT_CREATE
 	if not _write_sconstruct(module_root, snake, ref):
 		return ERR_CANT_CREATE
-	if not _write_register_types(module_root + "/src", snake, []):
+	if not TemplateUtils.write_register_types(module_root + "/src", snake, []):
 		return ERR_CANT_CREATE
 	if not _write_gdextension_file(snake):
 		return ERR_CANT_CREATE
@@ -176,8 +128,8 @@ func _write_gdextension_file(snake_name: String) -> bool:
 	var ctx := {
 		"snake": snake_name,
 	}
-	var content := _apply_template(_load_template("gdextension.txt"), ctx)
-	return _write_file("res://bin/%s.gdextension" % snake_name, content)
+	var content := TemplateUtils.apply_template(TemplateUtils.load_template("gdextension.txt"), ctx)
+	return TemplateUtils.write_file("res://bin/%s.gdextension" % snake_name, content)
 
 func _get_godot_cpp_ref(target_version: String) -> String:
 	var output := []

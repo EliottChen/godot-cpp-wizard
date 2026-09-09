@@ -1,0 +1,21 @@
+#ifndef @@UPPER@@_H
+#define @@UPPER@@_H
+
+#include <godot_cpp/classes/@@BASE_INCLUDE@@.hpp>
+
+namespace godot {
+
+class @@NAME@@ : public @@BASE@@ {
+	GDCLASS(@@NAME@@, @@BASE@@)
+
+protected:
+	static void _bind_methods();
+
+public:
+	@@NAME@@();
+	~@@NAME@@();
+};
+
+}
+
+#endif
