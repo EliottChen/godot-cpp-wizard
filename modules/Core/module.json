@@ -1,0 +1,18 @@
+{
+	"classes": [
+		{
+			"base": "Node2D",
+			"name": "Enemy",
+			"snake": "enemy"
+		},
+		{
+			"base": "Node2D",
+			"name": "GridUnit",
+			"snake": "grid_unit"
+		}
+	],
+	"godot_cpp_ref": "master",
+	"name": "Core",
+	"snake_name": "core",
+	"target_godot_version": "4.7"
+}

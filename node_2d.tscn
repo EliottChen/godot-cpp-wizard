@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://jnukyqsyduuo"]
+
+[ext_resource type="Script" uid="uid://d2eqny3pjmbgy" path="res://enemy.gd" id="1_wtcfe"]
+
+[node name="Enemy" type="Enemy" unique_id=1524026333]
+script = ExtResource("1_wtcfe")
+
+[node name="GridUnit" type="GridUnit" parent="." unique_id=1890055409]
