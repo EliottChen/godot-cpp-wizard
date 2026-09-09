@@ -16,6 +16,14 @@ The project contains on the `main` branch the entire project environment and the
 Download latest version of the plugin and place it in `res://addons/` root.
 go in Project Settings > Plugins and activate the plugin
 
+## Using the plugin
+![alt text](docs/howto.png)
 
 # Advanced infos
 By default the plugin has the godot-cpp header files in the plugin directly, there is no way to specify a custom path for now this is a known limitation.
+
+
+# Known issues: 
+You can't switch modules for now, and if you create a second module you won't be able to add class to the previous module.
+To delete module:
+- Delete bin and module folder in `res://` 
