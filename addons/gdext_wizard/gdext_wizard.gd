@@ -6,12 +6,21 @@ var moduleManager: ModuleManager
 func _enter_tree() -> void:
 	moduleManager = ModuleManager.new()
 	add_tool_menu_item("C++: Create New Module...", _on_open_create_dialog)
+	add_tool_menu_item("C++: Recompile Current Module", _on_recompile_current_module)
 
 func _exit_tree() -> void:
 	remove_tool_menu_item("C++: Create New Module...")
+	remove_tool_menu_item("C++: Recompile Current Module")
 	if moduleManager:
-		moduleManager.cleanup() # Supprime proprement le nœud Window de l'éditeur
+		moduleManager.cleanup()
 		moduleManager = null
+
+func _on_recompile_current_module() -> void:
+	var current := ModuleRegistry.get_current_module()
+	if current.is_empty():
+		push_error(Debug.plugin_log_prefix + ": no current module set.")
+		return
+	moduleManager.recompile_module(current)
 
 func _on_open_create_dialog() -> void:
 	if moduleManager == null:
