@@ -50,3 +50,46 @@ func add_class(module_name: String, class_name_raw: String, base_class: String =
 
 	Debug.log("Class '%s' (%s) added to module '%s'." % [pascal, base_class, module_name])
 	return OK
+
+func remove_class(module_name: String, class_name_raw: String) -> Error:
+	var module_root := "res://modules/%s" % module_name
+	if not DirAccess.dir_exists_absolute(module_root):
+		push_error(Debug.plugin_log_prefix + ": module '%s' does not exist." % module_name)
+		return ERR_DOES_NOT_EXIST
+
+	var data := ModuleRegistry.load_module_data(module_name)
+	if data.is_empty():
+		push_error(Debug.plugin_log_prefix + ": no metadata for module '%s'." % module_name)
+		return ERR_DOES_NOT_EXIST
+
+	var snake := class_name_raw.to_snake_case()
+	var classes: Array = data.get("classes", [])
+	var idx := -1
+	for i in classes.size():
+		if classes[i].get("snake", "") == snake:
+			idx = i
+			break
+
+	if idx == -1:
+		push_error(Debug.plugin_log_prefix + ": class '%s' not found in module '%s'." % [class_name_raw, module_name])
+		return ERR_DOES_NOT_EXIST
+
+	classes.remove_at(idx)
+	data["classes"] = classes
+
+	var h_path := module_root + "/src/%s.h" % snake
+	var cpp_path := module_root + "/src/%s.cpp" % snake
+	if FileAccess.file_exists(h_path):
+		DirAccess.remove_absolute(h_path)
+	if FileAccess.file_exists(cpp_path):
+		DirAccess.remove_absolute(cpp_path)
+
+	if not ModuleRegistry.save_module_data(module_name, data):
+		return ERR_CANT_CREATE
+
+	var snake_module: String = data.get("snake_name", module_name.to_snake_case())
+	if not TemplateUtils.write_register_types(module_root + "/src", snake_module, classes):
+		return ERR_CANT_CREATE
+
+	Debug.log("Class '%s' removed from module '%s'." % [class_name_raw, module_name])
+	return OK

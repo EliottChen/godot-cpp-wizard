@@ -1,3 +1,17 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# gdext_wizard build artifacts
+modules/*/.sconsign.dblite
+modules/*/src/*.obj
+modules/*/src/*.o
+bin/*.dll
+bin/*.lib
+bin/*.pdb
+bin/*.exp
+bin/*.so
+bin/*.dylib
+addons/gdext_wizard/wizard_state.cfg
+
+compile_commands.json
