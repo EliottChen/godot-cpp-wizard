@@ -19,8 +19,6 @@ go in Project Settings > Plugins and activate the plugin
 ## .gitignore
 Add this to your project's root `.gitignore`:
 
-​```gitignore
-# gdext_wizard build artifacts
 modules/*/.sconsign.dblite
 modules/*/src/*.obj
 modules/*/src/*.o
@@ -33,7 +31,6 @@ bin/*.dylib
 addons/gdext_wizard/wizard_state.cfg
 .godot/
 compile_commands.json
-​```
 
 # Using the plugin
 ## Feature
