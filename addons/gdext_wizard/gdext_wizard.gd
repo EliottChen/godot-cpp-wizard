@@ -4,24 +4,25 @@ extends EditorPlugin
 var moduleManager: ModuleManager
 var classManagerDialog : ClassManagerDialog
 var classRemoverDialog : ClassRemoverDialog
+var cpp_menu : PopupMenu
 
 func _enter_tree() -> void:
 	Debug.check_log()
 	moduleManager = ModuleManager.new()
-	var menu : PopupMenu = PopupMenu.new();
 	
-	add_tool_menu_item("C++: Create New Module...", _on_open_create_dialog)
-	add_tool_menu_item("C++: Recompile Current Module", _on_recompile_current_module)
-	add_tool_menu_item("C++: Recompile All modules", _on_recompile_all)
-	add_tool_menu_item("C++: Add New Class...", _on_open_and_class_dialog)
-	add_tool_menu_item("C++: Remove Class...", _on_open_remove_class_dialog)
+	cpp_menu = PopupMenu.new();
+	
+	cpp_menu.add_item("Create New Module...", 0)
+	cpp_menu.add_item("Recompile All Modules", 1)
+	cpp_menu.add_separator()
+	cpp_menu.add_item("Add New Class...", 2)
+	cpp_menu.add_item("Remove Class...", 3)
+	cpp_menu.id_pressed.connect(_on_submenu_pressed)
+	
+	add_tool_submenu_item("C++", cpp_menu)
 
 func _exit_tree() -> void:
-	remove_tool_menu_item("C++: Create New Module...")
-	remove_tool_menu_item("C++: Recompile Current Module")
-	remove_tool_menu_item("C++: Recompile All modules")
-	remove_tool_menu_item("C++: Add New Class...")
-	remove_tool_menu_item("C++: Remove Class...")
+	remove_tool_menu_item("C++")
 	
 	if moduleManager:
 		moduleManager.cleanup()
@@ -30,6 +31,16 @@ func _exit_tree() -> void:
 		classManagerDialog.cleanup()
 		classManagerDialog = null
 
+func _on_submenu_pressed(id: int) -> void:
+	match id:
+		0: _on_open_create_dialog()
+		1: _on_recompile_all()
+		2: _on_open_and_class_dialog()
+		3: _on_open_remove_class_dialog()
+
+# ====================================================
+# =                 Helper functions                 =
+# ====================================================
 func _on_open_and_class_dialog() -> void:
 	if classManagerDialog == null:
 		classManagerDialog = ClassManagerDialog.new()
