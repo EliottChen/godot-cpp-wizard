@@ -114,20 +114,23 @@ func recompile_module(module_name: String) -> Error:
 		return ERR_DOES_NOT_EXIST
 
 	var module_root_abs := ProjectSettings.globalize_path("res://modules/%s" % module_name)
+	
 	var scons_args := ["-C", module_root_abs]
-	if data.get("godot_cpp_ref", "") == "master":
+	if data.get("godot_cpp_ref", "") == "master" and data.has("target_godot_version"):
 		scons_args.append("api_version=%s" % data["target_godot_version"])
 
-	var output := []
+	var output: Array = []
 	var exit_code := -1
 
 	if OS.get_name() == "Windows":
+		# Utilisation de /C dans cmd.exe avec syntaxe explicite
 		var cmd_args := ["/C", "py", "-m", "SCons"] + scons_args
-		exit_code = OS.execute("cmd", cmd_args, output, true)
+		exit_code = OS.execute("cmd.exe", cmd_args, output, true)
 	else:
 		exit_code = OS.execute("scons", scons_args, output, true)
 
-	Debug.log("scons output:\n" + String("\n").join(output))
+	var full_output := "\n".join(output)
+	Debug.log("scons output:\n" + full_output)
 
 	if exit_code != 0:
 		push_error(Debug.plugin_log_prefix + ": recompile failed for '%s' (exit code %d)." % [module_name, exit_code])
