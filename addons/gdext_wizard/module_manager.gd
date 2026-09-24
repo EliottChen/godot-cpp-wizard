@@ -78,12 +78,16 @@ func create_module(raw_name: String) -> Error:
 
 	var info := Engine.get_version_info()
 	var target_version := "%d.%d" % [info.major, info.minor]
+	var ref := "master"
 
 	DirAccess.make_dir_recursive_absolute(module_root + "/src")
 
 	if not TemplateUtils.write_file(module_root + "/.gdignore", ""):
 		return ERR_CANT_CREATE
-
+	if not _write_module_metadata(module_root, pascal, snake, ref, target_version):
+		return ERR_CANT_CREATE
+	if not _write_sconstruct(module_root, snake, ref):
+		return ERR_CANT_CREATE
 	if not TemplateUtils.write_register_types(module_root + "/src", snake, []):
 		return ERR_CANT_CREATE
 	if not _write_gdextension_file(snake):
