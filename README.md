@@ -16,6 +16,25 @@ The project contains on the `main` branch the entire project environment and the
 Download latest version of the plugin and place it in `res://addons/` root.
 go in Project Settings > Plugins and activate the plugin
 
+## .gitignore
+Add this to your project's root `.gitignore`:
+
+​```gitignore
+# gdext_wizard build artifacts
+modules/*/.sconsign.dblite
+modules/*/src/*.obj
+modules/*/src/*.o
+bin/*.dll
+bin/*.lib
+bin/*.pdb
+bin/*.exp
+bin/*.so
+bin/*.dylib
+addons/gdext_wizard/wizard_state.cfg
+.godot/
+compile_commands.json
+​```
+
 ## Using the plugin
 I tried integrating my plugin inside [Mini Emblem](https://github.com/EliottChen/MiniEmblem) as a test case.
 If you see theses three options appearing in Project > Tools, then the plugin has been installed succesfully!
