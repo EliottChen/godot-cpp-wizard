@@ -12,6 +12,7 @@ func _enter_tree() -> void:
 	
 	cpp_menu = PopupMenu.new();
 	
+	cpp_menu.add_item("Open modules directory", 4)
 	cpp_menu.add_item("Create New Module...", 0)
 	cpp_menu.add_item("Recompile All Modules", 1)
 	cpp_menu.add_separator()
@@ -37,10 +38,21 @@ func _on_submenu_pressed(id: int) -> void:
 		1: _on_recompile_all()
 		2: _on_open_and_class_dialog()
 		3: _on_open_remove_class_dialog()
+		4: _on_open_sources_folder()
 
 # ====================================================
 # =                 Helper functions                 =
 # ====================================================
+func _on_open_sources_folder() -> Error:
+	var module_root := "res://modules/"
+	if not DirAccess.dir_exists_absolute(module_root):
+		push_error(Debug.plugin_log_prefix + ": modules folder does not exist.")
+		return ERR_DOES_NOT_EXIST
+
+	var abs_path := ProjectSettings.globalize_path(module_root)
+	return OS.shell_open(abs_path)
+	pass
+
 func _on_open_and_class_dialog() -> void:
 	if classManagerDialog == null:
 		classManagerDialog = ClassManagerDialog.new()
