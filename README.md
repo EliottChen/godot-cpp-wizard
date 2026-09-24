@@ -9,35 +9,53 @@ The project contains on the `main` branch the entire project environment and the
 ## Requirements
 - A Godot 4.x minimum
 - Python installed
-- Scons instamlled
+- Scons installed
 - A C++ compiler (MSVC, Clang)
 
 ## Install the plugin
-Download latest version of the plugin and place it in `res://addons/` root.
+## Create a new Godot project
+Download latest version of the plugin and extract it in `res://addons/` of your godot project. If it do not exist create it!
 go in Project Settings > Plugins and activate the plugin
 
 ## .gitignore
 Add this to your project's root `.gitignore`:
 
-modules/*/.sconsign.dblite
-modules/*/src/*.obj
-modules/*/src/*.o
-bin/*.dll
-bin/*.lib
-bin/*.pdb
-bin/*.exp
-bin/*.so
-bin/*.dylib
-addons/gdext_wizard/wizard_state.cfg
-.godot/
-compile_commands.json
+   modules/*/.sconsign.dblite
+   modules/*/src/*.obj
+   modules/*/src/*.o
+   bin/*.dll
+   bin/*.lib
+   bin/*.pdb
+   bin/*.exp
+   bin/*.so
+   bin/*.dylib
+   addons/gdext_wizard/wizard_state.cfg
+   .godot/
+   compile_commands.json
+
+## Create your first module
+Go to `Tools > C++ > Create Module`, name your module
+You should get some error such as:
+  ERROR: platform/windows/os_windows.cpp:483 - Condition "!FileAccess::exists(path)" is true. Returning: ERR_FILE_NOT_FOUND
+  ERROR: GDExtension dynamic library not found: 'res://bin/core.gdextension'.
+This is normal, you have to compile the module in order to fix this error, then go to `Tools > C++ > Recompile all modules`
+your godot window should freeze, this is normal: Scons is recompiling and placing the binaries in `res://bin`.
+>[!warning] The first compilation can be much slower
+> Do not close Godot in case the windows is freezing.
+
+If there is no error godot should restart automatically.
+Since there you can create any new class you want.
 
 # Using the plugin
+All the feature are available in the toolbar `Tools > C++`
 ## Feature
 - Create modules
 - Open modules folder
+- Recompile all Module
 - Add new C++ class in the desired module
 - Remove existing C++ class in the desired module
+
+Recompile all module when you want to apply your modification in Godot.
 
 ## Advanced infos
 By default the plugin has the godot-cpp header files in the plugin directly, there is no way to specify a custom path for now this is a known limitation.
