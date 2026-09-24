@@ -35,21 +35,17 @@ addons/gdext_wizard/wizard_state.cfg
 compile_commands.json
 ​```
 
-## Using the plugin
-I tried integrating my plugin inside [Mini Emblem](https://github.com/EliottChen/MiniEmblem) as a test case.
-If you see theses three options appearing in Project > Tools, then the plugin has been installed succesfully!
-![alt text](docs/howto.png)
+# Using the plugin
+## Feature
+- Create modules
+- Open modules folder
+- Add new C++ class in the desired module
+- Remove existing C++ class in the desired module
 
-# Advanced infos
+## Advanced infos
 By default the plugin has the godot-cpp header files in the plugin directly, there is no way to specify a custom path for now this is a known limitation.
 
-
-# Known issues: 
-You can't switch modules for now, and if you create a second module you won't be able to add class to the previous module.
-To delete module:
-- Delete bin and module folder in `res://` 
-
-# Removing a Module
+## Removing a Module
 Unlike adding or removing classes, module removal is intentionally **not** exposed as a menu action in the plugin. Deleting a module means deleting compiled binaries that Windows may have locked while the editor had them loaded, so doing it by hand (with the editor closed) is actually simpler and safer than automating it through the UI.
 
 To remove a module:
