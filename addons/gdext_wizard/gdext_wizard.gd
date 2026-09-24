@@ -7,6 +7,8 @@ var classManagerDialog : ClassManagerDialog
 func _enter_tree() -> void:
 	Debug.check_log()
 	moduleManager = ModuleManager.new()
+	var menu : PopupMenu = PopupMenu.new();
+	
 	add_tool_menu_item("C++: Create New Module...", _on_open_create_dialog)
 	add_tool_menu_item("C++: Recompile Current Module", _on_recompile_current_module)
 	add_tool_menu_item("C++: Add New Class...", _on_open_and_class_dialog)

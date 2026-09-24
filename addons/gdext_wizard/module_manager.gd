@@ -56,26 +56,6 @@ func _write_sconstruct(module_root: String, snake_name: String, godot_cpp_ref: S
 	var content := TemplateUtils.apply_template(TemplateUtils.load_template("sconstruct.txt"), ctx)
 	return TemplateUtils.write_file(module_root + "/SConstruct", content)
 
-func _get_godot_cpp_branch() -> String:
-	var info := Engine.get_version_info()
-	return "%d.%d" % [info.major, info.minor]
-
-func _ensure_godot_cpp_available(ref: String) -> bool:
-	var target_dir := "res://addons/gdext_wizard/godot-cpp-%s" % ref
-	if DirAccess.dir_exists_absolute(target_dir):
-		return true
-
-	Debug.log("Downloading godot-cpp (%s), this may take a moment..." % ref)
-	var args := [
-		"clone", "--recurse-submodules", "-b", ref,
-		"https://github.com/godotengine/godot-cpp",
-		ProjectSettings.globalize_path(target_dir)
-	]
-	var output := []
-	var exit_code := OS.execute("git", args, output, true)
-	if exit_code != 0:
-		push_error(Debug.plugin_log_prefix + ": git clone failed. Output: " + String("\n").join(output))
-	return exit_code == 0
 
 func _write_module_metadata(module_root: String, pascal: String, snake: String, godot_cpp_ref: String, target_version: String) -> bool:
 	var data := {
@@ -98,20 +78,12 @@ func create_module(raw_name: String) -> Error:
 
 	var info := Engine.get_version_info()
 	var target_version := "%d.%d" % [info.major, info.minor]
-	var ref := _get_godot_cpp_ref(target_version)
-
-	if not _ensure_godot_cpp_available(ref):
-		return ERR_CANT_CREATE
 
 	DirAccess.make_dir_recursive_absolute(module_root + "/src")
 
 	if not TemplateUtils.write_file(module_root + "/.gdignore", ""):
 		return ERR_CANT_CREATE
 
-	if not _write_module_metadata(module_root, pascal, snake, ref, target_version):
-		return ERR_CANT_CREATE
-	if not _write_sconstruct(module_root, snake, ref):
-		return ERR_CANT_CREATE
 	if not TemplateUtils.write_register_types(module_root + "/src", snake, []):
 		return ERR_CANT_CREATE
 	if not _write_gdextension_file(snake):
@@ -130,19 +102,6 @@ func _write_gdextension_file(snake_name: String) -> bool:
 	}
 	var content := TemplateUtils.apply_template(TemplateUtils.load_template("gdextension.txt"), ctx)
 	return TemplateUtils.write_file("res://bin/%s.gdextension" % snake_name, content)
-
-func _get_godot_cpp_ref(target_version: String) -> String:
-	var output := []
-	var exit_code := OS.execute("git", [
-		"ls-remote", "--exit-code", "--heads",
-		"https://github.com/godotengine/godot-cpp", target_version
-	], output, true)
-
-	if exit_code == 0:
-		return target_version
-
-	Debug.log("No godot-cpp branch '%s' upstream, falling back to master." % target_version)
-	return "master"
 
 func recompile_module(module_name: String) -> Error:
 	var data: Dictionary = ModuleRegistry.load_module_data(module_name)
